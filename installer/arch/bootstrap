@@ -96,7 +96,10 @@ bootstrappkg=""
 while [ -n "$missing" ]; do
     package="${missing%% *}"
     missing="${missing#$package }"
-
+    if [ "$package" = "libncursesw.so" ]; then 
+        echo "skipping $package"
+        installed="$installed $package "
+    fi;
     # Do not install if already installed
     if [ "${installed#*" $package "}" != "$installed" ]; then
         continue
@@ -117,6 +120,7 @@ while [ -n "$missing" ]; do
     tar --warning=no-unknown-keyword -xkf "$FETCHDIRPKG/$file" \
         --exclude=".PKGINFO" --exclude=".MTREE" \
         --exclude=".INSTALL" --exclude=".Changelog" \
+        --overwrite \
         -C "$BOOTSTRAPCHROOT"
 
     # Get list of dependencies (ignore versions)
